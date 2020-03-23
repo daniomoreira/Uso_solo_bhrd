@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+#ignora arquivos de excel
+*.xlsx
+
+#ignorar pasta
+docs
