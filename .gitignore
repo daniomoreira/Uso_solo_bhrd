@@ -9,8 +9,3 @@
 #ignorar pasta
 docs
 
-#outros
-*.prj
-*.shp
-*.shx
-*cpg
