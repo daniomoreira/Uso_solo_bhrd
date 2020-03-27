@@ -7,7 +7,7 @@
 library(rgdal)
 library(raster)
 
-uso.pontos <- readOGR(dsn = "./output", layer = "mapbi-2018-bhrd")
+uso.pontos <- readOGR(dsn = "./output", layer = "map-2018-bhrd-1km")
 
 uso.pontos
 
@@ -48,7 +48,7 @@ extent(uso.pontos)
 uso.pontos$m_2018_
 
 # view unique values within the "m_2018_" attributes
-levels(uso.pontos@data$m_2018_)
+levels(uso.pontos@data$m_2018_) #did not return unique values
 
 #select a subset of features from a spatial object in R
 #select features that are of m_2018_ "number of the class"
@@ -74,13 +74,13 @@ tm_shape(pontos_3) + tm_dots(size = .3, col = "green")
 
 
 #other simple way to plot
-plot
+library(graphics)
 plot(pontos_3,
      p = 1, col = 3, main = "Formação Florestal")
 
 #Changing the columns names of the table
 p <- uso.pontos
-dim(p)
+dim(p) #cheking dimension again
 
 col_name <- paste("classe")
 #for more than one column use
@@ -93,6 +93,8 @@ head(p)
 #Counting number of categories of the column "class':
 table(p$classe)
 
-#Calculating the area of each class. Each point is for a raster size of 1 km2 or 100 ha:
-class_3 <- (18363*1)/100
-class_3 #in ha
+
+# We can copy this to excel and calculating the area.
+#Calculating the area of each class. Each point is for a raster size of 1 km2 or 100 ha. So, n of raster of a class X 1km2.
+
+#END
