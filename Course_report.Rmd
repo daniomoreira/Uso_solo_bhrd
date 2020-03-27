@@ -1,0 +1,101 @@
+---
+title: "MANIPULAÇÃO DE DADOS EM RASTER E *SHAPEFILE*"
+author: "Danielle Moreira"
+date: "27/03/2020"
+output: html_document
+---
+
+<p style="text-align: center;font-size: 20pt">
+RESUMO
+</p>
+
+<style>
+p.body {
+  text-align: justify;
+}
+</style>
+
+Este relatório descreve o processo de organização, manipulação e exploração de dados em raster e shapefile de uso do solo para a bacia do rio Doce. O objetivo é calcular a área de cada classe de uso do solo do arquivo original em raster.
+
+## Arquivos em raster e em shapefile
+
+<style>
+body {
+text-align: justify}
+</style>
+
+Para sistemas de informação geográfica, dados raster são imagens formadas por pixels (ou células) que armazenam um valor. Essas imagens podem ser fotografias aéreas ou imagens de satélites que podem ser utilizadas para compor um mapa (Figura 1). A resolução da imagem depende da área, ou tamanho, do pixel. Para uma alta resolução, os pixels são menores e em maior quantidade.
+
+
+![Figura 1. Exemplo de uma figura raster.](D:/01_INMA_BHRD/Uso_solo_bhrd/figs/figura01.png)
+
+
+Já arquivo em *shapefile* (shp) é um formato de arquivos que possuem dados geoespaciais, ou seja, que contém a localização geométrica e a informação de atributos de uma feiçao geográfica, sob a forma de vetor.
+
+
+## Exercitando no R
+### Baixando o arquivo original
+
+Neste exercício, utilizei um arquivo em raster do uso do solo para a bacia hidrográfica do rio Doce, proveniente do MapBiomas. O MapBiomas disponibiliza o uso do solo para o Brasil inteiro e para vários anos. Aqui, utilizarei o arquivo para o ano de 2018.
+
+O arquivo do MapBiomas pode ser baixado por meio do Google Earth Engine. No  repositório do GitHub <https://github.com/mapbiomas-brazil/user-toolkit>, é possível encontrar instruções de como baixá-lo já cortado para a bacia.
+
+
+### Transformando arquivo de raster para (shp)
+
+Usando os pacotes 'rgdal' e 'raster', vamos criar um novo objeto e plotar o arquivo em raster para visualização (vide script "1-Raster_to_points"). Posterirmente, vamos transformar o arquivo de raster para um arquivo em shp. Para isso usamos a função 'rasterToPoints'.
+
+```{r Readraster, include=FALSE}
+library(rgdal)
+library(raster)
+```
+
+```{r rasterToPoints,}
+# Criando um objeto do arquivo em raster
+uso <- raster("./data/mapbiomas-2018-bhrd-1km.tif")
+#Transformando o arquivo de raster para shp(pontos)
+uso.pontos1 <- rasterToPoints(uso, spatial = TRUE)
+```
+
+Essa transformação, um arquivo de pontos será criado, cuja tabela terá uma coluna com os valores de cada raster, que, para o caso do arquivo original que usamos, são os códigos das classes de uso do solo. Ao final, nosso arquivo transformado ficará como na Figura 2.
+
+![Figura 2. Arquivo transformado de raster para shapefile de pontos.](D:/01_INMA_BHRD/Uso_solo_bhrd/figs/figura02.png)
+
+
+
+## Manipulando e explorando o novo arquivo em shp
+
+O script "2-classes_uso" possui os passos para explorar e manipular o arquivo em shp. Nele, estão descritas várias formas de conferir as dimensões, número de linhas e de colunas, nomes das colunas, a projeção espacial e a visualização das primeiras linhas e colunas da tabela do arquivo shp.
+
+No script também tem instruções de como selecionar um subconjunto de uma coluna e de como visualizá-lo em um mapa. 
+
+```{r, subsetPontos, include=FALSE,}
+uso.pontos <- readOGR(dsn = "./output", layer = "map-2018-bhrd-1km")
+pontos_3 <- uso.pontos[uso.pontos$m_2018_ == "3",]
+```
+
+```{r, mapa2, fig.width=12, fig.height=8, fig.align='center', fig.cap="Figura 3. Visualizando apenas os pontos da classe 3 (formação florestal)", echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
+library(graphics)
+plot(pontos_3,
+     p = 1, col = 3, main = "Formação Florestal")
+```
+
+
+Para finalizar, como o nosso objetivo era calcular o tamanho da área de cada classe de raster, é possível fazer isso com a função
+```{r nomeCol, include=FALSE}
+col_name <- paste("classe")
+#for more than one column use
+#col_name <- paste ("col", 1:11, sep = "")
+
+head(uso.pontos)
+names(uso.pontos) <- col_name
+head(uso.pontos)
+```
+
+```{r count,}
+table(uso.pontos$classe)
+# onde, classe é o nome da coluna
+```
+
+
+
