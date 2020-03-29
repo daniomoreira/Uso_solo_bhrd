@@ -9,3 +9,5 @@ Arquivos em escala de 1 km e 30m.
 
 Este projeto mostra como transformar arquivo em raster para um arquivo em shp (pontos), como ler o arquivo em shp e como criar figuras.
 
+Ver o arquivo "Course_report" para mais informações.
+
